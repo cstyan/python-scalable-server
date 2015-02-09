@@ -10,11 +10,12 @@ def handler(clientsocket, clientaddr):
     print info
     clientsocket.send(str(info))
     while 1:
+       
         data = clientsocket.recv(1024)
         print data
         msg = "You sent me: %s" % data
         clientsocket.send(msg)
-    clientsocket.close()
+        
 
  
 if __name__ == "__main__":
