@@ -1,23 +1,26 @@
 from socket import *
 import thread
+import time
+import datetime
  
+
+
 def handler(clientsocket, clientaddr):
-    print "Accepted connection from: ", clientaddr
- 
+    info =  "Accepted connection from: ", clientaddr
+    print info
+    clientsocket.send(str(info))
     while 1:
         data = clientsocket.recv(1024)
-        if not data:
-            break
-        else:
-            print data
-            msg = "You sent me: %s" % data
-            clientsocket.send(msg)
+        print data
+        msg = "You sent me: %s" % data
+        clientsocket.send(msg)
     clientsocket.close()
+
  
 if __name__ == "__main__":
  
     host = 'localhost'
-    port = 55567
+    port = 55573
     buf = 1024
  
     addr = (host, port)
