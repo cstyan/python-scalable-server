@@ -6,8 +6,8 @@ import random
 
  
 def handleTheSocket(clientNumber):
-    host = 'localhost'
-    port = 55573
+    host = '192.168.0.13'
+    port = 7000
     buf = 1024
     #clientNumber = 5
     addr = (host, port)
@@ -19,10 +19,10 @@ def handleTheSocket(clientNumber):
     while 1:
       data = clientsocket.recv(buf)
       print data + '\n'
-      data =  "hi I'm " + str(clientNumber)
+      data =  "hi I'm " + str(clientsocket.getsockname())
       #raw_input("Send the server a message! >>>")
       clientsocket.send(data)
-      t = random.randint(1, 5)
+      t = random.randint(0, 0)
       time.sleep(t)
 
 if __name__ == '__main__':
