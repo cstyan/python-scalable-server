@@ -17,8 +17,8 @@ def handleTheSocket(clientNumber):
     clientsocket.connect(addr)
   
     while 1:
-      data = clientsocket.recv(buf)
-      print data + '\n'
+      #data = clientsocket.recv(buf)
+      #print data + '\n'
       data =  "hi I'm " + str(clientsocket.getsockname())
       #raw_input("Send the server a message! >>>")
       clientsocket.send(data)
