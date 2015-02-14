@@ -1,6 +1,6 @@
 from socket import *
 import select
-import threading
+import thread
 
 connectionCount = {}
 
@@ -9,16 +9,17 @@ def setup(host, port, buffer, threads):
 	addr = (host, port)
  	serversocket = socket(AF_INET, SOCK_STREAM)
 
-
+	print "starting loop through number of threads"
 	for x in range(0, threads):
 		#create an epoll object for each thread
 		epoll = select.epoll()
      	epollCollection.insert(x, epoll)
      	connectionCount.update({x:0})
-     	thread(x, epoll)
-
+     	thread.start_new_thread(threadFunc, (x, epollCollection[x]))
+	print "asdf"
 	serversocket.bind(addr)
-	serversocket.listen(10000)
+	serversocket.listen(2)
+	print "server socket set up"
 
 	try:
 		while 1:
@@ -35,7 +36,7 @@ def setup(host, port, buffer, threads):
 		serversocket.close()	
 
 
-def thread(threadNum, epollObj):
+def threadFunc(threadNum, epollObj):
 	buf = 1024
 	while 1:
 		events = epollObj.poll(-1)
@@ -55,4 +56,4 @@ def thread(threadNum, epollObj):
 
 
 if __name__ == '__main__':
-	setup('localhost', 7000, 1024, 8)
+	setup('192.168.0.13', 7000, 1024, 8)
