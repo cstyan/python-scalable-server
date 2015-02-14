@@ -3,6 +3,7 @@ import select
 import thread
 
 connectionCount = {}
+sockets = []
 
 def setup(host, port, buffer, threads):
 	epollCollection = []
@@ -25,6 +26,7 @@ def setup(host, port, buffer, threads):
 		while 1:
 			print "test 1"
 			clientsocket, clientaddr = serversocket.accept()
+			sockets.insert(clientsocket, clientsocket)
 			print "after"
 			clientsocket.setblocking(0)
 			threadWithLowestNumberOfConnections = min(connectionCount, key=connectionCount.get)
@@ -43,7 +45,7 @@ def threadFunc(threadNum, epollObj):
 		# epoll level triggered on threads collection
 		for fileno, event in events:
 			if event & select.EPOLLIN:
-				data = fileno.recv(buf)
+				data = sockets[fileno].recv(buf)
 				print buff
 				fileno.send(data)
 		# on unblock call messaging (read from socket, echo back)
