@@ -10,12 +10,12 @@ def setup(host, port, buffer, threads):
  	serversocket = socket(AF_INET, SOCK_STREAM)
 
 
-	for x in range(threads):
+	for x in range(0, threads):
 		#create an epoll object for each thread
 		epoll = select.epoll()
-     	epollCollection[x] = epoll
+     	epollCollection.insert(x, epoll)
      	connectionCount.update({x:0})
-     	thread(threadNum, epoll)
+     	thread(x, epoll)
 
 	serversocket.bind(addr)
 	serversocket.listen(10000)
