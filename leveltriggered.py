@@ -22,7 +22,9 @@ def setup(host, port, buffer, threads):
 
 	try:
 		while 1:
+			print "test 1"
 			clientsocket, clientaddr = serversocket.accept()
+			print "after"
 			clientsocket.setblocking(0)
 			threadWithLowestNumberOfConnections = min(connectionCount, key=connectionCount.get)
 
