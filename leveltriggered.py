@@ -8,7 +8,7 @@ sockets = {}
 def setup(host, port, buffer, threads):
 	epollCollection = []
 	addr = (host, port)
- 	serversocket = socket(AF_INET, SOCK_STREAM)
+ 	serverSocket = socket(AF_INET, SOCK_STREAM)
 
 	print "starting loop through number of threads"
 	for x in range(0, threads):
@@ -17,7 +17,8 @@ def setup(host, port, buffer, threads):
      	epollCollection.insert(x, epoll)
      	connectionCount.update({x:0})
      	thread.start_new_thread(threadFunc, (x, epollCollection[x]))
-	print "asdf"
+
+	#should these calls not be before the thread creation?
 	serversocket.bind(addr)
 	serversocket.listen(2)
 	print "server socket set up"
@@ -29,6 +30,9 @@ def setup(host, port, buffer, threads):
 			sockets.update({clientsocket.fileno(): clientsocket})
 			print "after"
 			clientsocket.setblocking(0)
+			#find the thread with the least number of current connections this allows us to load balance among
+			#the threads and reduces the chance of the worst case scenario where one thread has a disproportionate
+			#amount of traffic
 			threadWithLowestNumberOfConnections = min(connectionCount, key=connectionCount.get)
 
 			epollCollection[threadWithLowestNumberOfConnections].register(clientsocket.fileno(), select.EPOLLIN)
@@ -46,7 +50,7 @@ def threadFunc(threadNum, epollObj):
 		for fileno, event in events:
 			if event & select.EPOLLIN:
 				data = sockets.get(fileno).recv(buf)
-				print buff
+				print data
 				fileno.send(data)
 		# on unblock call messaging (read from socket, echo back)
 
