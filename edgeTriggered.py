@@ -27,6 +27,7 @@ def setup(host, port, buffer, threads):
         thread.start_new_thread(threadFunc, ())
         print "thread created"
 
+    serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     serverSocket.bind(('', port))
     serverSocket.listen(10)
     threadFunc()
