@@ -6,7 +6,7 @@ connectionCount = {}
 sockets = {}
 
 def setup(host, port, buffer, threads):
-	epollCollection = []
+	epollCollection = {}
 	addr = (host, port)
  	serverSocket = socket(AF_INET, SOCK_STREAM)
 
@@ -14,18 +14,18 @@ def setup(host, port, buffer, threads):
 	for x in range(0, threads):
 		#create an epoll object for each thread
 		epoll = select.epoll()
-     	epollCollection.insert(x, epoll)
+     	epollCollection.update({x:epoll})
      	connectionCount.update({x:0})
      	thread.start_new_thread(threadFunc, (x, epollCollection[x]))
 
 	#should these calls not be before the thread creation?
-	serversocket.bind(addr)
-	serversocket.listen(2)
+	serverSocket.bind(addr)
+	serverSocket.listen(500)
 	print "server socket set up"
 
 	try:
 		while 1:
-			clientsocket, clientaddr = serversocket.accept()
+			clientsocket, clientaddr = serverSocket.accept()
 			sockets.update({clientsocket.fileno(): clientsocket})
 			clientsocket.setblocking(0)
 			#find the thread with the least number of current connections this allows us to load balance among
@@ -47,7 +47,7 @@ def threadFunc(threadNum, epollObj):
 				recvSocket = sockets.get(fileno)
 				data = recvSocket.recv(buf)
 				print data
-				fileno.send(data)
+				recvSocket.send(data)
 
 if __name__ == '__main__':
-	setup('192.168.0.13', 7000, 1024, 8)
+	setup('', 7000, 1024, 8)
