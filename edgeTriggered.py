@@ -92,8 +92,8 @@ def dataHandler(fileno):
         clientSocket.send(data)
     except:
         print "Socket exception, removing that client."
-        print "Exception was: ", sys.exc_info()[0]
-        del sockets[fileno]
+        print "Exception was: ", sys.exc_info()
+        #del sockets[fileno]
         epoll.unregister(fileno)
         pass
    
