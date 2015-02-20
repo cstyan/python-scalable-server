@@ -19,10 +19,14 @@ def setup():
     global serverSocket
     global port
     global threads
+    global dataSent
+    global dataRecvd
 
     #init
     epoll = select.epoll()
     sockets = {}
+    dataSent = 0
+    dataRecvd = 0
 
     print "threads: %d" % threads
     print "port: %d" % port
@@ -82,10 +86,13 @@ def dataHandler(fileno):
     global sockets
     global buf
     global epoll
+    global dataSent
+    global dataRecvd
 
     clientSocket = sockets.get(fileno)
     print "receiving data from socket"
     data = clientSocket.recv(buf)
+    dataRecvd += len(data)
     print data
     print len(data)
     if len(data) == 0:
@@ -93,6 +100,7 @@ def dataHandler(fileno):
     print "all data sent, echoing back to client"
     #echo back to client
     clientSocket.sendall(data)
+    dataSent += len(data)
     print "data echoed to client"
 
     # clientSocket = sockets.get(fileno)
