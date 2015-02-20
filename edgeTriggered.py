@@ -90,7 +90,7 @@ def dataHandler(fileno):
     print len(data)
     print "all data sent, echoing back to client"
     #echo back to client
-    clientSocket.send(data)
+    clientSocket.sendall(data)
     print "data echoed to client"
 
     # clientSocket = sockets.get(fileno)
