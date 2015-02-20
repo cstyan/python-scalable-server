@@ -72,14 +72,17 @@ def acceptHandler():
     #access globals
     global sockets
     global serverSocket
-
-    clientSocket, clientAddr = serverSocket.accept()
-    #set non-blocking mode
-    clientSocket.setblocking(0)
-    #add the new client socket to the global collection
-    sockets.update({clientSocket.fileno(): clientSocket})
-    epoll.register(clientSocket.fileno(), select.EPOLLIN | select.EPOLLET)
-    print "client connected!"
+    while 1:
+        try:
+            clientSocket, clientAddr = serverSocket.accept()
+            #set non-blocking mode
+            clientSocket.setblocking(0)
+            #add the new client socket to the global collection
+            sockets.update({clientSocket.fileno(): clientSocket})
+            epoll.register(clientSocket.fileno(), select.EPOLLIN | select.EPOLLET)
+            print "client connected!"
+        except:
+            break
 
 #handle the incomming data event
 def dataHandler(fileno):
