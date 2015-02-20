@@ -93,7 +93,7 @@ def dataHandler(fileno):
     print "receiving data from socket"
     data = clientSocket.recv(buf)
     dataRecvd += len(data)
-    print data
+    print dataRecvd
     print len(data)
     if len(data) == 0:
         return
@@ -101,6 +101,7 @@ def dataHandler(fileno):
     #echo back to client
     clientSocket.sendall(data)
     dataSent += len(data)
+    print dataSent
     print "data echoed to client"
 
     # clientSocket = sockets.get(fileno)
