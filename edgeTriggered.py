@@ -81,6 +81,7 @@ def dataHandler(fileno):
     #access globals
     global sockets
     global buf
+    global epoll
 
     clientSocket = sockets.get(fileno)
     print str(clientSocket)
@@ -92,7 +93,9 @@ def dataHandler(fileno):
         #echo the message back to the client
         clientSocket.send(data)
     except:
-        print "socket exception"
+        print "socket exception, removing that client"
+        del sockets[fileno]
+        epoll.unregister(fileno)
         pass
    
 
