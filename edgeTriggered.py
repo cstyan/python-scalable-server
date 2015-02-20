@@ -86,6 +86,7 @@ def dataHandler(fileno):
     clientSocket = sockets.get(fileno)
     print "receiving data from socket"
     data = clientSocket.recv(buf)
+    puts len(data)
     print "all data sent, echoing back to client"
     #echo back to client
     clientSocket.send(data)
