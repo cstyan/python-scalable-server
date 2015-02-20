@@ -88,6 +88,8 @@ def dataHandler(fileno):
     data = clientSocket.recv(buf)
     print data
     print len(data)
+    if len(data) == 0:
+        return
     print "all data sent, echoing back to client"
     #echo back to client
     clientSocket.sendall(data)
