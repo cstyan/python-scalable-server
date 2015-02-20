@@ -86,8 +86,8 @@ def dataHandler(fileno):
     clientSocket = sockets.get(fileno)
     data = 0
     #while sys.getsizeof(data) != buf:
-    echoed = false
-    while echoed == false:
+    echoed = False
+    while echoed == False:
         try:
             data = clientSocket.recv(buf)
             #echo the message back to the client
@@ -99,7 +99,7 @@ def dataHandler(fileno):
             epoll.unregister(fileno)
             pass
 
-        echoed = true
+        echoed = True
    
 
 def main(argv):
