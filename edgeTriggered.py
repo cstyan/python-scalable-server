@@ -79,7 +79,7 @@ def acceptHandler():
             clientSocket.setblocking(0)
             #add the new client socket to the global collection
             sockets.update({clientSocket.fileno(): clientSocket})
-            epoll.register(clientSocket.fileno(), select.EPOLLIN | select.EPOLLET)
+            epoll.register(clientSocket, select.EPOLLIN | select.EPOLLET)
             print "client connected!"
         except:
             break
