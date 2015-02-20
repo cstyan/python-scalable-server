@@ -3,6 +3,8 @@ import select
 import thread
 import sys
 import getopt
+from socket import error as SocketError
+import errno
 
 # buf = 2048
 # sockets = {}
@@ -95,7 +97,12 @@ def dataHandler(fileno):
 
     clientSocket = sockets.get(fileno)
     print "receiving data from socket"
-    data = clientSocket.recv(buf)
+    try:
+        data = clientSocket.recv(buf)
+    except SocketError as e:
+        if e.errno != errno.ECONNRESET:
+            raise
+        pass
     dataRecvd += len(data)
     print dataRecvd
     print len(data)
