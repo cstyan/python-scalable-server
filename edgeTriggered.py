@@ -6,15 +6,9 @@ import getopt
 from socket import error as SocketError
 import errno
 
-# buf = 2048
-# sockets = {}
-# epoll = select.epoll()
-# threads = 3
-# port = 7000
-
 #initial setup, including server socket and registration with the epoll object
 def setup():
-    #access all the globals
+    #create all the globals
     global epoll
     global sockets
     global buf
@@ -36,11 +30,9 @@ def setup():
 
     #socket setup
     serverSocket = socket(AF_INET, SOCK_STREAM)
-    #serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     epoll.register(serverSocket, select.EPOLLIN | select.EPOLLET)
     #add the server socket to the global sockets collection
     sockets.update({serverSocket.fileno(): serverSocket})
-    #should this be before or after
     serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     serverSocket.bind(('', port))
     serverSocket.listen(1)
@@ -139,22 +131,20 @@ def main(argv):
     global buf
 
     try:
-        opts, args = getopt.getopt(argv, "t:p:b:h",["threads=","port=","buffer=", "help"])
+        opts, args = getopt.getopt(argv, "p:b:h",["threads=","port=","buffer=", "help"])
     except getopt.GetoptError:
         #print 'edgeTriggered.py -t <numThreads> -p <port> -b <bufferSize>'
         usage()
         sys.exit(2)
     
     if len(sys.argv) < 3:
-        print 'edgeTriggered.py -t <numThreads> -p <port> -b <bufferSize>'
+        print 'edgeTriggered.py -p <port> -b <bufferSize>'
         sys.exit()
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
-            print 'edgeTriggered.py -t <numThreads> -p <port> -b <bufferSize>'
+            print 'edgeTriggered.py -p <port> -b <bufferSize>'
             sys.exit()
-        elif opt in ("-t","--threads"):
-            threads = int(arg)
         elif opt in ("-p", "--port"):
             port = int(arg)
         elif opt in ("-b", "--buffer"):
