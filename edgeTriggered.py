@@ -37,7 +37,7 @@ def setup():
     #should this be before or after
     serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     serverSocket.bind(('', port))
-    serverSocket.listen(10)
+    serverSocket.listen(1000)
 
     #start the threads, they all have access to the global epoll object and all sockets
     for x in range(0, threads):
