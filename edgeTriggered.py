@@ -35,7 +35,7 @@ def setup():
     sockets.update({serverSocket.fileno(): serverSocket})
     serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     serverSocket.bind(('', port))
-    serverSocket.listen(1)
+    serverSocket.listen(listenAmt)
     serverSocket.setblocking(0)
 
     threadFunc()

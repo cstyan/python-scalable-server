@@ -6,7 +6,7 @@ import getopt
 from socket import error as SocketError
 import errno
 
-def setup(host, port, buffer, threads):
+def setup():
 	global epollCollection
 	global sockets
 	global buf
@@ -16,10 +16,12 @@ def setup(host, port, buffer, threads):
 	global dataSent
 	global dataRecvd
 	global listenAmt
+	global connectionCount
 
 	#init
 	sockets = {}
 	epollCollection = {}
+	connectionCount = {}
 	dataSent = 0
 	dataRecvd = 0
 
@@ -28,7 +30,7 @@ def setup(host, port, buffer, threads):
 	serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 	serverSocket.bind(('', port))
 	serverSocket.listen(listenAmt)
-	serverSocket.setblocking(0)
+	#serverSocket.setblocking(0)
 
  	print "threads: %d" % threads
  	print "port: %d" % port
@@ -53,7 +55,7 @@ def setup(host, port, buffer, threads):
 			threadWithLowestNumberOfConnections = min(connectionCount, key=connectionCount.get)
 			epollCollection[threadWithLowestNumberOfConnections].register(clientsocket.fileno(), select.EPOLLIN)
 	finally:
-		serversocket.close()	
+		serverSocket.close()	
 
 
 def threadFunc(threadNum, epollObj):
@@ -68,5 +70,36 @@ def threadFunc(threadNum, epollObj):
 				print data
 				recvSocket.send(data)
 
+def main(argv):
+    global port
+    global buf
+    global threads
+    global listenAmt
+
+    try:
+        opts, args = getopt.getopt(argv, "t:l:p:b:h",["threads=", "listenAmt=", "port=", "buffer=", "help"])
+    except getopt.GetoptError:
+        #usage()
+        sys.exit(2)
+    
+    if len(sys.argv) < 3:
+        print 'edgeTriggered.py -t <threads> -l <listenAmt> -p <port> -b <bufferSize>'
+        sys.exit()
+
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            print 'edgeTriggered.py -t <threads> -l <listenAmt> -p <port> -b <bufferSize>'
+            sys.exit()
+            port = int(arg)
+        elif opt in ("-t", "--threads"):
+            threads = int(arg)
+        elif opt in ("-l", "--listenAmt"):
+            listenAmt = int(arg)
+        elif opt in ("-p", "--port"):
+            port = int(arg)
+        elif opt in ("-b", "--buffer"):
+            buf = int(arg)
+
 if __name__ == '__main__':
-	setup('', 7000, 1024, 8)
+	main(sys.argv[1:])
+	setup()
