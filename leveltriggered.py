@@ -53,7 +53,7 @@ def setup():
 			#the threads and reduces the chance of the worst case scenario where one thread has a disproportionate
 			#amount of traffic
 			threadWithLowestNumberOfConnections = min(connectionCount, key=connectionCount.get)
-			epollCollection[threadWithLowestNumberOfConnections].register(clientsocket.fileno(), select.EPOLLIN)
+			epollCollection[threadWithLowestNumberOfConnections].register(clientsocket, select.EPOLLIN)
 	finally:
 		serverSocket.close()	
 
