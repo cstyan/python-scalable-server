@@ -96,23 +96,19 @@ def dataHandler(fileno):
     global dataRecvd
 
     clientSocket = sockets.get(fileno)
-    print "receiving data from socket"
     try:
         data = clientSocket.recv(buf)
+        dataRecvd += len(data)
     except SocketError as e:
+        print "A socket error occurred."
         if e.errno != errno.ECONNRESET:
             raise
         pass
-    dataRecvd += len(data)
-    print dataRecvd
-    print len(data)
     print "all data sent, echoing back to client"
     #echo back to client
     if(data != ""):
         clientSocket.sendall(data)
         dataSent += len(data)
-        print dataSent
-        print "data echoed to client"
 
     # clientSocket = sockets.get(fileno)
     # data = 0
