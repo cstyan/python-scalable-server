@@ -84,16 +84,15 @@ def dataHandler(fileno):
     global epoll
 
     clientSocket = sockets.get(fileno)
-    print str(clientSocket)
     data = 0
     #while sys.getsizeof(data) != buf:
     try:
         data = clientSocket.recv(buf)
-        print data
         #echo the message back to the client
         clientSocket.send(data)
     except:
-        print "socket exception, removing that client"
+        print "Socket exception, removing that client."
+        print "Exception was: ", sys.exc_info()[0]
         del sockets[fileno]
         epoll.unregister(fileno)
         pass
