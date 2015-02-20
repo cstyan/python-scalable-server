@@ -84,22 +84,31 @@ def dataHandler(fileno):
     global epoll
 
     clientSocket = sockets.get(fileno)
-    data = 0
-    #while sys.getsizeof(data) != buf:
-    echoed = False
-    while echoed == False:
-        try:
-            data = clientSocket.recv(buf)
-            #echo the message back to the client
-            clientSocket.send(data)
-        except:
-            print "Socket exception, removing that client."
-            print "Exception was: ", sys.exc_info()
-            #del sockets[fileno]
-            epoll.unregister(fileno)
-            pass
+    data = clientSocket.recv(buf)
+    #echo back to client
+    clientSocket.send(data)
 
-        echoed = True
+    # clientSocket = sockets.get(fileno)
+    # data = 0
+    # #while sys.getsizeof(data) != buf:
+    # echoed = False
+    # while echoed == False:
+    #     data = ''
+    #     while len(data) < buf:
+    #         try:
+    #             data = clientSocket.recv(buf - len(data))
+    #         except:
+    #             print "Socket exception, removing that client."
+    #             print "Exception was: ", sys.exc_info()
+    #             #del sockets[fileno]
+    #             #epoll.unregister(fileno)
+    #             pass
+    #     #end of while loop
+    #     while data:
+    #         sent = sock.send(data)
+    #         data = data[sent:]
+
+    #     echoed = True
    
 
 def main(argv):
@@ -119,7 +128,6 @@ def main(argv):
         sys.exit()
 
     for opt, arg in opts:
-        print "opt is"
         if opt in ("-h", "--help"):
             print 'edgeTriggered.py -t <numThreads> -p <port> -b <bufferSize>'
             sys.exit()

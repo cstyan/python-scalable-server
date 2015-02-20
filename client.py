@@ -7,7 +7,7 @@ import random
  
 def handleTheSocket(clientNumber):
     host = 'localhost'
-    port = 7000
+    port = 8005
     buf = 2048
     #clientNumber = 5
     addr = (host, port)
