@@ -83,12 +83,12 @@ def main(argv):
         sys.exit(2)
     
     if len(sys.argv) < 3:
-        print 'edgeTriggered.py -t <threads> -l <listenAmt> -p <port> -b <bufferSize>'
+        print 'leveltriggered.py -t <threads> -l <listenAmt> -p <port> -b <bufferSize>'
         sys.exit()
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
-            print 'edgeTriggered.py -t <threads> -l <listenAmt> -p <port> -b <bufferSize>'
+            print 'leveltriggered.py -t <threads> -l <listenAmt> -p <port> -b <bufferSize>'
             sys.exit()
             port = int(arg)
         elif opt in ("-t", "--threads"):
