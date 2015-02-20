@@ -18,7 +18,7 @@ def setup(host, port, buffer, threads):
     buf = buffer
     #socket setup
     serverSocket = socket(AF_INET, SOCK_STREAM)
-    serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    #serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     epoll.register(serverSocket, select.EPOLLIN | select.EPOLLET)
     #add the server socket to the global sockets collection
     sockets.update({serverSocket.fileno(): serverSocket})
@@ -83,4 +83,4 @@ def dataHandler(fileno):
    
 
 if __name__ == '__main__':
-    setup('localhost', 7000, 1024, 3)
+    setup('', 7000, 1024, 3)
