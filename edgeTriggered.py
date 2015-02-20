@@ -2,34 +2,48 @@ from socket import *
 import select
 import thread
 import sys
+import getopt
 
-buf = 2048
-sockets = {}
-epoll = select.epoll()
+# buf = 2048
+# sockets = {}
+# epoll = select.epoll()
+# threads = 3
+# port = 7000
 
 #initial setup, including server socket and registration with the epoll object
-def setup(host, port, buffer, threads):
+def setup():
     #access all the globals
-    global buf
-    global serverSocket
     global epoll
     global sockets
+    global buf
+    global serverSocket
+    global port
+    global threads
 
-    buf = buffer
+    #init
+    epoll = select.epoll()
+    sockets = {}
+
+    print "threads: %d" % threads
+    print "port: %d" % port
+    print "buffer: %d" % buf
+
     #socket setup
     serverSocket = socket(AF_INET, SOCK_STREAM)
     #serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     epoll.register(serverSocket, select.EPOLLIN | select.EPOLLET)
     #add the server socket to the global sockets collection
     sockets.update({serverSocket.fileno(): serverSocket})
+    #should this be before or after
+    serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    serverSocket.bind(('', port))
+    serverSocket.listen(10)
+
     #start the threads, they all have access to the global epoll object and all sockets
     for x in range(0, threads):
         thread.start_new_thread(threadFunc, ())
         print "thread created"
 
-    serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-    serverSocket.bind(('', port))
-    serverSocket.listen(10)
     threadFunc()
 
 #main driver for each thread
@@ -82,5 +96,35 @@ def dataHandler(fileno):
         pass
    
 
+def main(argv):
+    global threads
+    global port
+    global buf
+
+    try:
+        opts, args = getopt.getopt(argv, "t:p:b:h",["threads=","port=","buffer=", "help"])
+    except getopt.GetoptError:
+        #print 'edgeTriggered.py -t <numThreads> -p <port> -b <bufferSize>'
+        usage()
+        sys.exit(2)
+    
+    if len(sys.argv) < 3:
+        print 'edgeTriggered.py -t <numThreads> -p <port> -b <bufferSize>'
+        sys.exit()
+
+    for opt, arg in opts:
+        print "opt is"
+        if opt in ("-h", "--help"):
+            print 'edgeTriggered.py -t <numThreads> -p <port> -b <bufferSize>'
+            sys.exit()
+        elif opt in ("-t","--threads"):
+            threads = int(arg)
+        elif opt in ("-p", "--port"):
+            port = int(arg)
+        elif opt in ("-b", "--buffer"):
+            buf = int(arg)
+
+
 if __name__ == '__main__':
-    setup('', 7000, 1024, 3)
+    main(sys.argv[1:])
+    setup()
