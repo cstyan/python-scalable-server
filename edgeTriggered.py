@@ -84,9 +84,12 @@ def dataHandler(fileno):
     global epoll
 
     clientSocket = sockets.get(fileno)
+    print "receiving data from socket"
     data = clientSocket.recv(buf)
+    print "all data sent, echoing back to client"
     #echo back to client
     clientSocket.send(data)
+    print "data echoed to client"
 
     # clientSocket = sockets.get(fileno)
     # data = 0
