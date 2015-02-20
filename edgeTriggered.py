@@ -14,7 +14,7 @@ def setup():
     global buf
     global serverSocket
     global port
-    global threads
+    global listenAmt
     global dataSent
     global dataRecvd
 
@@ -24,7 +24,7 @@ def setup():
     dataSent = 0
     dataRecvd = 0
 
-    print "threads: %d" % threads
+    print "listen amount: %d" % listenAmt
     print "port: %d" % port
     print "buffer: %d" % buf
 
@@ -37,11 +37,6 @@ def setup():
     serverSocket.bind(('', port))
     serverSocket.listen(1)
     serverSocket.setblocking(0)
-
-    #start the threads, they all have access to the global epoll object and all sockets
-    for x in range(0, threads):
-        thread.start_new_thread(threadFunc, ())
-        print "thread created"
 
     threadFunc()
 
@@ -101,50 +96,30 @@ def dataHandler(fileno):
             raise
         pass
     print "all data sent, echoing back to client"
-
-    # clientSocket = sockets.get(fileno)
-    # data = 0
-    # #while sys.getsizeof(data) != buf:
-    # echoed = False
-    # while echoed == False:
-    #     data = ''
-    #     while len(data) < buf:
-    #         try:
-    #             data = clientSocket.recv(buf - len(data))
-    #         except:
-    #             print "Socket exception, removing that client."
-    #             print "Exception was: ", sys.exc_info()
-    #             #del sockets[fileno]
-    #             #epoll.unregister(fileno)
-    #             pass
-    #     #end of while loop
-    #     while data:
-    #         sent = sock.send(data)
-    #         data = data[sent:]
-
-    #     echoed = True
    
 
 def main(argv):
-    global threads
     global port
     global buf
+    global listenAmt
 
     try:
-        opts, args = getopt.getopt(argv, "p:b:h",["threads=","port=","buffer=", "help"])
+        opts, args = getopt.getopt(argv, "l:p:b:h",["listenAmt=","port=","buffer=", "help"])
     except getopt.GetoptError:
-        #print 'edgeTriggered.py -t <numThreads> -p <port> -b <bufferSize>'
-        usage()
+        #usage()
         sys.exit(2)
     
     if len(sys.argv) < 3:
-        print 'edgeTriggered.py -p <port> -b <bufferSize>'
+        print 'edgeTriggered.py -l <listenAmt> -p <port> -b <bufferSize>'
         sys.exit()
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
-            print 'edgeTriggered.py -p <port> -b <bufferSize>'
+            print 'edgeTriggered.py -l <listenAmt> -p <port> -b <bufferSize>'
             sys.exit()
+            port = int(arg)
+        elif opt in ("-l", "--listenAmt"):
+            listenAmt = int(arg)
         elif opt in ("-p", "--port"):
             port = int(arg)
         elif opt in ("-b", "--buffer"):

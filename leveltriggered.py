@@ -1,14 +1,38 @@
 from socket import *
 import select
 import thread
-
-connectionCount = {}
-sockets = {}
+import sys
+import getopt
+from socket import error as SocketError
+import errno
 
 def setup(host, port, buffer, threads):
+	global epollCollection
+	global sockets
+	global buf
+	global serverSocket
+	global port
+	global threads
+	global dataSent
+	global dataRecvd
+	global listenAmt
+
+	#init
+	sockets = {}
 	epollCollection = {}
-	addr = (host, port)
- 	serverSocket = socket(AF_INET, SOCK_STREAM)
+	dataSent = 0
+	dataRecvd = 0
+
+	#socket setup
+	serverSocket = socket(AF_INET, SOCK_STREAM)
+	serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+	serverSocket.bind(('', port))
+	serverSocket.listen(listenAmt)
+	serverSocket.setblocking(0)
+
+ 	print "threads: %d" % threads
+ 	print "port: %d" % port
+ 	print "buffer: %d" % buf
 
 	print "starting loop through number of threads"
 	for x in range(0, threads):
@@ -17,11 +41,6 @@ def setup(host, port, buffer, threads):
      	epollCollection.update({x:epoll})
      	connectionCount.update({x:0})
      	thread.start_new_thread(threadFunc, (x, epollCollection[x]))
-
-	#should these calls not be before the thread creation?
-	serverSocket.bind(addr)
-	serverSocket.listen(500)
-	print "server socket set up"
 
 	try:
 		while 1:
