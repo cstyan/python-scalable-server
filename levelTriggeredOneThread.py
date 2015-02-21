@@ -30,7 +30,7 @@ def setup():
 
     #socket setup
     serverSocket = socket(AF_INET, SOCK_STREAM)
-    epoll.register(serverSocket, select.EPOLLIN | select.EPOLLET)
+    epoll.register(serverSocket, select.EPOLLIN)
     #add the server socket to the global sockets collection
     sockets.update({serverSocket.fileno(): serverSocket})
     serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
