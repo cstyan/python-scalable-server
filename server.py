@@ -34,11 +34,8 @@ def setup():
     print "buffer: %d" % buf    
 
 def handler(clientsocket, clientaddr):
-    print info
-    clientsocket.send(str(info))
     while 1:
-       
-        data = clientsocket.recv(1024)
+        data = clientsocket.recv(buf)
         print data
         clientsocket.send(msg)        
 
