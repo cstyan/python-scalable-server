@@ -36,8 +36,7 @@ def setup():
 def handler(clientsocket, clientaddr):
     while 1:
         data = clientsocket.recv(buf)
-        print data
-        clientsocket.send(msg)        
+        clientsocket.send(data)        
 
 def main(argv):
     global port
