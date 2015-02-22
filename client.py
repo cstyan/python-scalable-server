@@ -35,15 +35,10 @@ def handleTheSocket(clientNumber):
 
     i = 0
     start = datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
-    print "starting to send messages"
-    print len(msgStr)
     while i < msg:
         clientsocket.send(msgStr)
-        print "sent"
         data = clientsocket.recv(buf)
-        print "recvd"
         i += 1
-        print str(i)
 
     end = datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
     duration = int(end) - int(start)
@@ -110,7 +105,8 @@ if __name__ == '__main__':
     print "threads are finished"
     with open(fileName, 'w') as f:  
         for key in times:
-            f.write(str(times[key]) + "\n")
-            print times[key]
+            avg = times[key] / msg
+            ms = float(avg) / 1000
+            f.write(str(ms) + "\n")
 
     print "done"
