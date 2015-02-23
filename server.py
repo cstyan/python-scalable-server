@@ -1,3 +1,13 @@
+# Source File: server.py - simple multithreaded echo server
+# Program: Scalable Server Methods 8005A2
+# Functions:
+#     setup
+#     handler
+#     main
+# Date: February 23, 2015
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
+
 from socket import *
 import select
 import thread
@@ -5,7 +15,16 @@ import sys
 import getopt
 from socket import error as SocketError
 import errno
- 
+
+# Function: setup
+# Interface: setup()
+#
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
+#
+# Description: This function handles all initial setup required
+# for the server, including server socket and collections needed
+# to keep track of the connected sockets. 
 def setup():
     global sockets
     global buf
@@ -33,11 +52,31 @@ def setup():
     print "port: %d" % port
     print "buffer: %d" % buf    
 
+# Function: handler
+# Interface: handler(clientsocket, clientaddr)
+#   clientsocket: the socket returned from the accepted
+#   clientaddr: address of the client
+#
+# Designer: Jon Eustace
+# Programmer: Jon Eustace
+#
+# Description: This function handles all incomming data sent
+# to the server in one of the child threads.  It reads data 
+# and then echoes it back to the server.
 def handler(clientsocket, clientaddr):
     while 1:
         data = clientsocket.recv(buf)
         clientsocket.send(data)        
 
+# Function: main
+# Interface: main(argv)
+#   argv: command line arguments after the filename
+#
+# Designer: Callum Styan
+# Programmer: Callum Styan
+#
+# Description: This function handles all command line
+# arguments necessary for the program.
 def main(argv):
     global port
     global buf
@@ -64,12 +103,12 @@ def main(argv):
             port = int(arg)
         elif opt in ("-b", "--buffer"):
             buf = int(arg)
- 
+
+#main method of the program
 if __name__ == "__main__":
     main(sys.argv[1:])
     setup()
     while 1:
-        print "Server is listening for connections\n"
         clientsocket, clientaddr = serverSocket.accept()
         thread.start_new_thread(handler, (clientsocket, clientaddr))
     serverSocket.close()

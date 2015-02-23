@@ -1,3 +1,14 @@
+# Source File: leveltriggered.py - simple epoll LT echo server
+# Program: Scalable Server Methods 8005A2
+# Functions:
+#     setup
+#	  threadFunc
+#     accpetHandler
+#	  dataHandler
+#     main
+# Date: February 23, 2015
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
 from socket import *
 import select
 import thread
@@ -6,6 +17,17 @@ import getopt
 from socket import error as SocketError
 import errno
 
+# Function: setup
+# Interface: setup()
+#
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
+#
+# Description: This function handles all initial setup required
+# for the server, including server socket and collections needed
+# to keep track of the connected sockets. In this version of our
+# level triggered server we tried to multithread the data receiving
+# and load balance all the sockets among the threads.
 def setup():
 	global epollCollection
 	global sockets
@@ -57,9 +79,19 @@ def setup():
 	finally:
 		serverSocket.close()	
 
-
+# Function: threadFunc
+# Interface: threadFunc()
+#
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
+#
+# Description: This function starts the infinite loop
+# that the server uses to block on epoll.  It only deals
+# with data events as our accept events are handled in the
+# main 'controller' thread.
 def threadFunc(threadNum, epollObj):
-	buf = 1024
+	global buf
+	#buf = 1024
 	while 1:
 		events = epollObj.poll(-1)
 		# epoll level triggered on threads collection
@@ -70,6 +102,15 @@ def threadFunc(threadNum, epollObj):
 				print data
 				recvSocket.send(data)
 
+# Function: main
+# Interface: main(argv)
+#   argv: command line arguments after the filename
+#
+# Designer: Callum Styan
+# Programmer: Callum Styan
+#
+# Description: This function handles all command line
+# arguments necessary for the program.
 def main(argv):
     global port
     global buf
@@ -100,6 +141,7 @@ def main(argv):
         elif opt in ("-b", "--buffer"):
             buf = int(arg)
 
+#main method of the program
 if __name__ == '__main__':
 	main(sys.argv[1:])
 	setup()

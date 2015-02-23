@@ -1,3 +1,12 @@
+# Source File: client.py - simple multithreaded echo client
+# Program: Scalable Server Methods 8005A2
+# Functions:
+#     setup
+#     handler
+#     main
+# Date: February 23, 2015
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
 from socket import *
 import datetime
 import threading
@@ -18,13 +27,32 @@ global fileName
 msgStr = ""
 times = {}
 
+# Function: genMsg
+# Interface: genMsg()
+#
+# Designer: Callum Styan
+# Programmer: Callum Styan
+#
+# Description: This function generates a
+# message of the specified length for the
+# client to send.
 def genMsg():
     global msgStr
     i = 0
     while i < buf:
         msgStr += 'a'
         i += 1
- 
+
+# Function: genMsg
+# Interface: genMsg()
+#
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
+#
+# Description: This function handles sending
+# and receiving data on the client.  It also
+# keeps track of RTT's for logging after all
+# messages have been sent. 
 def handleTheSocket(clientNumber):
     global times
     global serverIP
@@ -44,6 +72,15 @@ def handleTheSocket(clientNumber):
     duration = int(end) - int(start)
     times.update({threading.current_thread():duration})
 
+# Function: main
+# Interface: main(argv)
+#   argv: command line arguments after the filename
+#
+# Designer: Callum Styan
+# Programmer: Callum Styan
+#
+# Description: This function handles all command line
+# arguments necessary for the program.
 def main(argv):
     global serverIP
     global port
@@ -82,6 +119,7 @@ def main(argv):
         elif opt in("-o", "--output"):
             fileName = arg
 
+#main method of the program
 if __name__ == '__main__':
     main(sys.argv[1:])
     threads = []

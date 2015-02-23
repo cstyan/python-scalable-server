@@ -1,3 +1,14 @@
+# Source File: edgeTriggered.py - simple epoll ET echo server
+# Program: Scalable Server Methods 8005A2
+# Functions:
+#     setup
+#     threadFunc
+#     acceptHandler
+#     dataHandler
+#     main
+# Date: February 23, 2015
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
 from socket import *
 import select
 import thread
@@ -6,7 +17,15 @@ import getopt
 from socket import error as SocketError
 import errno
 
-#initial setup, including server socket and registration with the epoll object
+# Function: setup
+# Interface: setup()
+#
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
+#
+# Description: This function handles all initial setup required
+# for the server, including server socket and collections needed
+# to keep track of the connected sockets. 
 def setup():
     #create all the globals
     global epoll
@@ -40,7 +59,16 @@ def setup():
 
     threadFunc()
 
-#main driver for each thread
+# Function: threadFunc
+# Interface: threadFunc()
+#
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
+#
+# Description: This function starts the infinite loop
+# that the server uses to block on epoll.  It calls
+# acceptHandler or dataHandler depending on which socket
+# was returned from the epoll wait function. 
 def threadFunc():
     global serverSocket
     global epoll
@@ -56,7 +84,15 @@ def threadFunc():
             elif event & select.EPOLLIN:
                 dataHandler(fileno)
 
-#handle the incomming accept event
+# Function: acceptHandler
+# Interface: acceptHandler()
+#
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
+#
+# Description: This function handles all accepting of
+# incomming connections.  It adds the new socket to the
+# correct collections and registers it with epoll. 
 def acceptHandler():
     #access globals
     global sockets
@@ -73,7 +109,15 @@ def acceptHandler():
         except:
             break
 
-#handle the incomming data event
+# Function: dataHandler
+# Interface: dataHandler()
+#
+# Designer: Callum Styan, Jon Eustace
+# Programmer: Callum Styan, Jon Eustace
+#
+# Description: This function handles all incomming data
+# events on connected sockets.  It adds the new socket
+# to the correct collections and registers it with epoll.
 def dataHandler(fileno):
     #access globals
     global sockets
@@ -95,9 +139,16 @@ def dataHandler(fileno):
         if e.errno != errno.ECONNRESET:
             raise
         pass
-    #print "all data sent, echoing back to client"
    
-
+# Function: main
+# Interface: main(argv)
+#   argv: command line arguments after the filename
+#
+# Designer: Callum Styan
+# Programmer: Callum Styan
+#
+# Description: This function handles all command line
+# arguments necessary for the program.
 def main(argv):
     global port
     global buf
@@ -125,7 +176,7 @@ def main(argv):
         elif opt in ("-b", "--buffer"):
             buf = int(arg)
 
-
+#main method of the program
 if __name__ == '__main__':
     main(sys.argv[1:])
     setup()
