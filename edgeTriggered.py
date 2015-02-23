@@ -63,15 +63,15 @@ def setup():
     serverSocket.setblocking(0)
 
     threadFunc()
-    # try:
-    #     threadFunc()
-    # except KeyboardInterrupt:
-    #     pass
-    # finally:
-    #     logging.info("Total clients connected during test: %s" % connectionCount)
-    #     logging.info("Total data received: %s" % dataRecvd)
-    #     logging.info("Total data sent: %s" % dataSent)
-    #     #serverSocket.close()
+    try:
+        threadFunc()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        logging.info("Total clients connected during test: %s" % connectionCount)
+        logging.info("Total data received: %s" % dataRecvd)
+        logging.info("Total data sent: %s" % dataSent)
+        #serverSocket.close()
 
 # Function: threadFunc
 # Interface: threadFunc()
