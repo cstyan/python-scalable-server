@@ -41,12 +41,12 @@ def setup():
     global connectionCount
 
     #init
-    logger = logging.basicConfig(filename='server.log', filemode='w', format='%(asctime)s: %(message)s', level=logging.DEBUG)
     epoll = select.epoll()
     sockets = {}
-    connectionCount = 0
+    logger = logging.basicConfig(filename='edgeServer.log', filemode='w', format='%(asctime)s: %(message)s', level=logging.DEBUG)
     dataSent = 0
     dataRecvd = 0
+    connectionCount = 0
 
     print "listen amount: %d" % listenAmt
     print "port: %d" % port
@@ -63,15 +63,6 @@ def setup():
     serverSocket.setblocking(0)
 
     threadFunc()
-    try:
-        threadFunc()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        logging.info("Total clients connected during test: %s" % connectionCount)
-        logging.info("Total data received: %s" % dataRecvd)
-        logging.info("Total data sent: %s" % dataSent)
-        #serverSocket.close()
 
 # Function: threadFunc
 # Interface: threadFunc()
@@ -111,6 +102,8 @@ def acceptHandler():
     #access globals
     global sockets
     global serverSocket
+    global connectionCount
+
     while 1:
         try:
             clientSocket, clientAddr = serverSocket.accept()
@@ -194,4 +187,12 @@ def main(argv):
 #main method of the program
 if __name__ == '__main__':
     main(sys.argv[1:])
-    setup()
+    try:
+        setup()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        logging.info("Total clients connected during test: %s" % connectionCount)
+        logging.info("Total data received: %s" % dataRecvd)
+        logging.info("Total data sent: %s" % dataSent)
+        serverSocket.close()

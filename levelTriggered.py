@@ -16,6 +16,7 @@ import sys
 import getopt
 from socket import error as SocketError
 import errno
+import logging
 
 # Function: setup
 # Interface: setup()
@@ -36,12 +37,16 @@ def setup():
     global listenAmt
     global dataSent
     global dataRecvd
+    global logger
+    global connectionCount
 
     #init
     epoll = select.epoll()
     sockets = {}
+    logger = logging.basicConfig(filename='levelServer.log', filemode='w', format='%(asctime)s: %(message)s', level=logging.DEBUG)
     dataSent = 0
     dataRecvd = 0
+    connectionCount = 0
 
     print "listen amount: %d" % listenAmt
     print "port: %d" % port
@@ -97,9 +102,11 @@ def acceptHandler():
     #access globals
     global sockets
     global serverSocket
+    global connectionCount
     while 1:
         try:
             clientSocket, clientAddr = serverSocket.accept()
+            connectionCount += 1
             #set non-blocking mode
             clientSocket.setblocking(0)
             #add the new client socket to the global collection
@@ -179,4 +186,12 @@ def main(argv):
 
 if __name__ == '__main__':
     main(sys.argv[1:])
-    setup()
+    try:
+        setup()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        logging.info("Total clients connected during test: %s" % connectionCount)
+        logging.info("Total data received: %s" % dataRecvd)
+        logging.info("Total data sent: %s" % dataSent)
+        serverSocket.close()

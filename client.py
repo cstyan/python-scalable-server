@@ -56,6 +56,7 @@ def genMsg():
 def handleTheSocket(clientNumber):
     global times
     global serverIP
+    global port
     addr = (serverIP, port) 
     clientsocket = socket(AF_INET, SOCK_STREAM)
     clientsocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
