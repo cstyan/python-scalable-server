@@ -15,6 +15,7 @@ import sys
 import getopt
 from socket import error as SocketError
 import errno
+import logging
 
 # Function: setup
 # Interface: setup()
@@ -34,11 +35,12 @@ def setup():
     global dataRecvd
     global listenAmt
     global connectionCount
-
+    global logger 
     #init
+    logger = logging.basicConfig(filename='server.log', filemode='w', format='%(asctime)s: %(message)s', level=logging.DEBUG)
     sockets = {}
     epollCollection = {}
-    connectionCount = {}
+    connectionCount = 0
     dataSent = 0
     dataRecvd = 0
 
@@ -64,9 +66,13 @@ def setup():
 # to the server in one of the child threads.  It reads data 
 # and then echoes it back to the server.
 def handler(clientsocket, clientaddr):
+    global dataSent
+    global dataRecvd
     while 1:
         data = clientsocket.recv(buf)
-        clientsocket.send(data)        
+        dataRecvd += len(data)
+        clientsocket.send(data)
+        dataSent += len(data)
 
 # Function: main
 # Interface: main(argv)
@@ -108,7 +114,16 @@ def main(argv):
 if __name__ == "__main__":
     main(sys.argv[1:])
     setup()
-    while 1:
-        clientsocket, clientaddr = serverSocket.accept()
-        thread.start_new_thread(handler, (clientsocket, clientaddr))
-    serverSocket.close()
+    global connectionCount
+    try:
+        while 1:
+            clientsocket, clientaddr = serverSocket.accept()
+            thread.start_new_thread(handler, (clientsocket, clientaddr))
+            connectionCount += 1
+    except KeyboardInterrupt:
+        pass
+    finally:
+        logging.info("Total clients connected during test: %s" % connectionCount)
+        logging.info("Total data received: %s" % dataRecvd)
+        logging.info("Total data sent: %s" % dataSent)
+        serverSocket.close()

@@ -16,6 +16,7 @@ import sys
 import getopt
 from socket import error as SocketError
 import errno
+import logging
 
 # Function: setup
 # Interface: setup()
@@ -36,10 +37,14 @@ def setup():
     global listenAmt
     global dataSent
     global dataRecvd
+    global logger
+    global connectionCount
 
     #init
+    logger = logging.basicConfig(filename='server.log', filemode='w', format='%(asctime)s: %(message)s', level=logging.DEBUG)
     epoll = select.epoll()
     sockets = {}
+    connectionCount = 0
     dataSent = 0
     dataRecvd = 0
 
@@ -58,6 +63,15 @@ def setup():
     serverSocket.setblocking(0)
 
     threadFunc()
+    # try:
+    #     threadFunc()
+    # except KeyboardInterrupt:
+    #     pass
+    # finally:
+    #     logging.info("Total clients connected during test: %s" % connectionCount)
+    #     logging.info("Total data received: %s" % dataRecvd)
+    #     logging.info("Total data sent: %s" % dataSent)
+    #     #serverSocket.close()
 
 # Function: threadFunc
 # Interface: threadFunc()
@@ -100,6 +114,7 @@ def acceptHandler():
     while 1:
         try:
             clientSocket, clientAddr = serverSocket.accept()
+            connectionCount += 1
             #set non-blocking mode
             clientSocket.setblocking(0)
             #add the new client socket to the global collection
