@@ -1,2 +1,2 @@
-# 8005A2
-10k server
+# A Python Scalable Server
+Simple echo servers that solve the c10k problem.
